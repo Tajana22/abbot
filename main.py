@@ -1,34 +1,55 @@
+# main.py
+from flask import Flask, request
 import os
-from dotenv import load_dotenv
-from telegram import Update
-from telegram.ext import ApplicationBuilder, MessageHandler, ContextTypes, filters
-from openai import OpenAI
+from telegram import Bot
+import openai
 
-# Завантажуємо .env
-load_dotenv()
-
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+# -----------------------------
+# 1️⃣ Налаштування змінних середовища
+# -----------------------------
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+PORT = int(os.environ.get("PORT", 5000))  # Render/Railway/Replit видають PORT через env
 
-# OpenAI client
-client = OpenAI(api_key=OPENAI_API_KEY)
+bot = Bot(token=TELEGRAM_BOT_TOKEN)
+openai.api_key = OPENAI_API_KEY
 
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_text = update.message.text
+app = Flask(__name__)
 
-    response = client.responses.create(
-        model="gpt-5-nano",
-        input=user_text
-    )
+# -----------------------------
+# 2️⃣ Маршрут Webhook для Telegram
+# -----------------------------
+@app.route(f"/webhook/{TELEGRAM_BOT_TOKEN}", methods=["POST"])
+def webhook():
+    data = request.json
 
-    await update.message.reply_text(response.output_text)
+    # Перевірка чи надійшло повідомлення
+    if "message" not in data:
+        return {"ok": True}
 
-def main():
-    app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    print("🤖 Bot is running...")
-    app.run_polling()
+    chat_id = data["message"]["chat"]["id"]
+    user_text = data["message"]["text"]
 
+    # -----------------------------
+    # 3️⃣ Виклик OpenAI API
+    # -----------------------------
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",  # або gpt-5-nano, якщо доступно
+            messages=[{"role": "user", "content": user_text}]
+        )
+        answer = response["choices"][0]["message"]["content"]
+    except Exception as e:
+        answer = "Вибач, сталася помилка 🤖"
+
+    # -----------------------------
+    # 4️⃣ Надсилаємо відповідь користувачу
+    # -----------------------------
+    bot.send_message(chat_id=chat_id, text=answer)
+    return {"ok": True}
+
+# -----------------------------
+# 5️⃣ Запуск Flask-сервера
+# -----------------------------
 if __name__ == "__main__":
-    main()
-
+    app.run(host="0.0.0.0", port=PORT)
