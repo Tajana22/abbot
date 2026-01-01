@@ -9,7 +9,7 @@ load_dotenv()
 # ================================
 # Налаштування
 # ================================
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")   # токен твого бота
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 MY_TELEGRAM_ID = int(os.getenv("MY_TELEGRAM_ID"))  # твій особистий ID
 
 bot = Bot(token=TELEGRAM_TOKEN)
