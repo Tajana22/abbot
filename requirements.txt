@@ -2,3 +2,7 @@ flask
 python-dotenv
 requests
 openai>=2.0.0
+flask
+openai
+python-dotenv
+requests
