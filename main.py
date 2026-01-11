@@ -62,6 +62,22 @@ SYSTEM_PROMPT = """
 app = Flask(__name__)
 
 # ================================
+# Response cleaner
+# ================================
+def clean_response(text: str) -> str:
+    forbidden = ["hello", "hi", "good day", "вітаю", "доброго дня"]
+    text_lower = text.lower()
+    for word in forbidden:
+        if text_lower.startswith(word):
+            # Split by first comma and take everything after it, or return original if no comma
+            parts = text.split(",", 1)
+            if len(parts) > 1:
+                return parts[1].strip()
+            # If no comma but starts with forbidden word, just strip that word
+            return text[len(word):].strip().lstrip(",").strip()
+    return text
+
+# ================================
 # Telegram sender
 # ================================
 def send_telegram_message(chat_id: int, text: str):
@@ -134,6 +150,9 @@ def webhook():
 
     # 1️⃣ Ask ChatGPT
     reply = ask_chatgpt(text)
+    
+    # Clean response from unwanted greetings
+    reply = clean_response(reply)
 
     # 2️⃣ Reply to user
     send_telegram_message(chat_id, reply)
