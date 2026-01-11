@@ -35,6 +35,9 @@ logger.info("Secrets loaded successfully")
 # ================================
 client = OpenAI(api_key=OPENAI_API_KEY)
 
+# Store chat history
+chat_history = {}
+
 # ================================
 # System prompt (Recruiter assistant)
 # ================================
@@ -111,23 +114,32 @@ def send_telegram_message(chat_id: int, text: str):
 # ================================
 # ChatGPT request
 # ================================
-def ask_chatgpt(user_text: str) -> str:
+def ask_chatgpt(chat_id: int, user_text: str) -> str:
     try:
-        response = client.responses.create(
-            model="gpt-4.1-mini",
-            input=[
-                {
-                    "role": "system",
-                    "content": SYSTEM_PROMPT
-                },
-                {
-                    "role": "user",
-                    "content": user_text
-                }
-            ]
+        # Initialize history for new chat_id
+        if chat_id not in chat_history:
+            chat_history[chat_id] = []
+        
+        # Add user message to history
+        chat_history[chat_id].append({"role": "user", "content": user_text})
+        
+        # Keep only last 10 messages to save tokens
+        chat_history[chat_id] = chat_history[chat_id][-10:]
+        
+        # Prepare messages for API
+        messages = [{"role": "system", "content": SYSTEM_PROMPT}] + chat_history[chat_id]
+        
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages
         )
 
-        return response.output_text.strip()
+        reply = response.choices[0].message.content.strip()
+        
+        # Add assistant response to history
+        chat_history[chat_id].append({"role": "assistant", "content": reply})
+        
+        return reply
 
     except Exception as e:
         logger.error(f"ChatGPT error: {e}", exc_info=True)
@@ -166,7 +178,7 @@ def webhook():
         return "OK", 200
 
     # 1️⃣ Ask ChatGPT
-    reply = ask_chatgpt(text)
+    reply = ask_chatgpt(chat_id, text)
     
     # Clean response from unwanted greetings
     reply = clean_response(reply)
