@@ -39,17 +39,17 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 # System prompt (Recruiter assistant)
 # ================================
 SYSTEM_PROMPT = """
-Ти — лаконічний асистент Тетяни, яка зараз активно шукає нові можливості для працевлаштування. Твоя єдина роль — професійно відповідати рекрутерам від її імені, надавати фактичну інформацію про її досвід або ставити уточнюючі запитання щодо вакансії.
+Ти — лаконічний асистент Тетяни, яка шукає роботу. Твоя роль — відповідати рекрутерам.
 
-СУВОРА ЗАБОРОНА:
-- Якщо це ПЕРШЕ повідомлення в діалозі — можна коротке привітання.
-- В усіх наступних повідомленнях ЗАБОРОНЕНО будь-які привітання.
-- ЖОДНИХ вступних фраз ("Дякую за запитання", "Щодо вашого запиту" тощо).
-- Одразу пиши суть.
+КРИТИЧНЕ ПРАВИЛО:
+- ЖОДНИХ ПРИВІТАНЬ. Взагалі. Навіть у першому повідомленні.
+- ЗАБОРОНЕНО писати: "Доброго дня", "Вітаю", "Привіт", "Hello", "Hi".
+- ЗАБОРОНЕНО вступні фрази: "Дякую за пропозицію", "Рада знайомству".
+- Починай ОДРАЗУ з відповіді на питання або уточнення деталей.
 
-Твоя мета: уточнити деталі ролі (формат роботи, локація, рейт, стек), якщо вони не вказані, та підтримувати професійний імідж Тетяни як кандидата.
+Твоя мета: уточнити формат (ремоут/офіс), локацію, рейт та стек.
 
-Тон: нейтральний, діловий, максимально короткий (до 2 речень). Без емоджі.
+Тон: нейтральний, діловий, максимально короткий (1-2 речення). Без емоджі.
 """
 # ================================
 # Flask app
@@ -60,16 +60,31 @@ app = Flask(__name__)
 # Response cleaner
 # ================================
 def clean_response(text: str) -> str:
-    forbidden = ["hello", "hi", "good day", "вітаю", "доброго дня"]
-    text_lower = text.lower()
+    forbidden = ["hello", "hi", "good day", "вітаю", "доброго дня", "привіт"]
+    text_lower = text.lower().strip()
+    
+    # Check if the text starts with any forbidden word followed by optional punctuation
     for word in forbidden:
         if text_lower.startswith(word):
-            # Split by first comma and take everything after it, or return original if no comma
-            parts = text.split(",", 1)
-            if len(parts) > 1:
-                return parts[1].strip()
-            # If no comma but starts with forbidden word, just strip that word
-            return text[len(word):].strip().lstrip(",").strip()
+            # Find the first occurrence of common separators after the greeting
+            # We look for comma, period, exclamation mark or newline
+            first_comma = text.find(",")
+            first_period = text.find(".")
+            first_exclamation = text.find("!")
+            first_newline = text.find("\n")
+            
+            # Find the earliest separator
+            separators = [s for s in [first_comma, first_period, first_exclamation, first_newline] if s != -1]
+            
+            if separators:
+                split_at = min(separators)
+                # If it's a comma, we skip it. For others, we might want to keep them or skip
+                # Usually greetings are followed by a comma or a period/exclamation
+                return text[split_at + 1:].strip()
+            
+            # If no separator found but starts with word, just strip the word
+            return text[len(word):].strip().lstrip(",.!?").strip()
+            
     return text
 
 # ================================
