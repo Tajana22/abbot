@@ -114,20 +114,25 @@ def send_telegram_message(chat_id: int, text: str):
 # ================================
 # ChatGPT request
 # ================================
+def get_messages(chat_id, user_message):
+    if chat_id not in chat_history:
+        chat_history[chat_id] = [
+            {"role": "system", "content": SYSTEM_PROMPT}
+        ]
+
+    chat_history[chat_id].append(
+        {"role": "user", "content": user_message}
+    )
+
+    # Keep only system prompt + last 10 messages
+    if len(chat_history[chat_id]) > 11:
+        chat_history[chat_id] = [chat_history[chat_id][0]] + chat_history[chat_id][-10:]
+
+    return chat_history[chat_id]
+
 def ask_chatgpt(chat_id: int, user_text: str) -> str:
     try:
-        # Initialize history for new chat_id
-        if chat_id not in chat_history:
-            chat_history[chat_id] = []
-        
-        # Add user message to history
-        chat_history[chat_id].append({"role": "user", "content": user_text})
-        
-        # Keep only last 10 messages to save tokens
-        chat_history[chat_id] = chat_history[chat_id][-10:]
-        
-        # Prepare messages for API
-        messages = [{"role": "system", "content": SYSTEM_PROMPT}] + chat_history[chat_id]
+        messages = get_messages(chat_id, user_text)
         
         response = client.chat.completions.create(
             model="gpt-4o-mini",
