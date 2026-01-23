@@ -42,16 +42,15 @@ chat_history = {}
 # System prompt (Recruiter assistant)
 # ================================
 SYSTEM_PROMPT = """
-Ти — персональний асистент Тетяни.
+Ти — персональний асистент Тетяни. 
 
-Твоє єдине завдання:
-На будь-яке повідомлення користувача відповідай ТІЛЬКИ однією фразою:
-"Дякую за повідомлення, я передам Тетяні."
+Твоє завдання — збирати інформацію від рекрутерів (рейт, стек, формат роботи) та передавати її Тетяні. 
 
 Жорсткі правила:
-- ЗАБОРОНЕНО будь-які привітання.
-- ЗАБОРОНЕНО будь-які інші слова або пояснення.
-- Тільки вказана фраза.
+1. ПРИВІТАННЯ ("Доброго дня", "Вітаю" тощо) дозволено ТІЛЬКИ у найпершому повідомленні діалогу.
+2. У всіх наступних повідомленнях БУДЬ-ЯКІ ПРИВІТАННЯ КАТЕГОРИЧНО ЗАБОРОНЕНІ.
+3. Відповідай лаконічно, продовжуючи контекст попередньої розмови як її пряме продовження.
+4. Повідомляй, що Тетяна ознайомиться з деталями та зв'яжеться за потреби.
 """
 # ================================
 # Flask app
@@ -61,22 +60,31 @@ app = Flask(__name__)
 # ================================
 # Response cleaner
 # ================================
-def clean_response(text: str) -> str:
+def clean_response(chat_id: int, text: str) -> str:
+    # Check if this is the first assistant message in history
+    is_first_reply = True
+    if chat_id in chat_history:
+        # Filter for assistant messages that were actually sent (not system prompt)
+        assistant_messages = [m for m in chat_history[chat_id] if m["role"] == "assistant"]
+        # If there's already at least one assistant message in history, this is not the first reply
+        # Note: we call this after ask_chatgpt adds the current reply to history, so > 1 means it's not the first
+        if len(assistant_messages) > 1:
+            is_first_reply = False
+
+    if is_first_reply:
+        return text
+
     forbidden = ["hello", "hi", "good day", "вітаю", "доброго дня", "привіт", "вітання", "добрий день", "добрий вечір", "доброго вечора", "добрий ранок", "доброго ранку"]
     
     import re
-    # Lowercase for comparison but keep original for processing if needed
     clean_text = text.strip()
     
-    # Repeatedly remove greetings from the start of the string
     changed = True
     while changed:
         changed = False
         text_lower = clean_text.lower()
         for word in forbidden:
             if text_lower.startswith(word):
-                # Split by first punctuation mark or newline following the word
-                # or just strip the word if no punctuation
                 parts = re.split(r'[,.!?;:\n]', clean_text, maxsplit=1)
                 if len(parts) > 1:
                     clean_text = parts[1].strip()
@@ -175,8 +183,8 @@ def webhook():
     # 1️⃣ Ask ChatGPT
     reply = ask_chatgpt(chat_id, text)
     
-    # Clean response from ALL greetings
-    reply = clean_response(reply)
+    # Clean response from unwanted greetings (allow only for the first reply)
+    reply = clean_response(chat_id, reply)
 
     # 2️⃣ Reply to user
     send_telegram_message(chat_id, reply)
