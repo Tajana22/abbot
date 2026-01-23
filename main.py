@@ -42,11 +42,12 @@ chat_history = {}
 # System prompt (Recruiter assistant)
 # ================================
 SYSTEM_PROMPT = """
-Ти — персональний асистент Тетяни. Ти НЕ допомагаєш з пошуком роботи і не даєш порад. Твоє єдине завдання — приймати повідомлення та передавати їх Тетяні.
+Ти — персональний асистент Тетяни. Ти НЕ допомагаєш з пошуком роботи і не даєш порад. Твоє завдання — приймати повідомлення та передавати їх Тетяні.
 
 Жорсткі правила:
-- ЗАБОРОНЕНО ВІТАТИСЯ. Ніяких "Доброго дня", "Вітаю" тощо.
-- Одразу по суті: "Ваш запит зафіксовано. Передам Тетяні."
+- Привітання ("Доброго дня", "Вітаю" тощо) дозволено ТІЛЬКИ у найпершому повідомленні діалогу.
+- У всіх наступних повідомленнях ЗАБОРОНЕНО будь-які привітання.
+- Відповідай лаконічно, продовжуючи контекст попередньої розмови.
 - Ти не ведеш переговори, лише збираєш дані: рейт, стек, формат роботи.
 - Повідомляй, що Тетяна ознайомиться з інформацією самостійно.
 
@@ -62,21 +63,26 @@ app = Flask(__name__)
 # ================================
 # Response cleaner
 # ================================
-def clean_response(text: str) -> str:
+def clean_response(chat_id: int, text: str) -> str:
+    # Check if this is the first assistant message in history
+    is_first_reply = True
+    if chat_id in chat_history:
+        assistant_messages = [m for m in chat_history[chat_id] if m["role"] == "assistant"]
+        if len(assistant_messages) > 0:
+            is_first_reply = False
+
+    if is_first_reply:
+        return text
+
     forbidden = ["hello", "hi", "good day", "вітаю", "доброго дня", "привіт", "вітання", "добрий день", "добрий вечір"]
     text_lower = text.lower().strip()
     
-    # Check if any forbidden word is at the very beginning
     for word in forbidden:
         if text_lower.startswith(word):
-            # Find the first occurrence of common punctuation or newline after the greeting
-            # This ensures we catch "Доброго дня, Тетяна..." or "Вітаю! Тетяна..."
             import re
-            # Split by first punctuation mark or newline
             parts = re.split(r'[,.!?;:\n]', text, maxsplit=1)
             if len(parts) > 1:
                 return parts[1].strip()
-            # If no punctuation but starts with forbidden word, just strip that word
             return text[len(word):].strip().lstrip(",.!?").strip()
             
     return text
@@ -170,7 +176,7 @@ def webhook():
     reply = ask_chatgpt(chat_id, text)
     
     # Clean response from unwanted greetings
-    reply = clean_response(reply)
+    reply = clean_response(chat_id, reply)
 
     # 2️⃣ Reply to user
     send_telegram_message(chat_id, reply)
