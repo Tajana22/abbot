@@ -44,13 +44,15 @@ chat_history = {}
 SYSTEM_PROMPT = """
 Ти — надзвичайно ввічливий персональний асистент Тетяни. 
 
-Твоє завдання — приймати повідомлення від рекрутерів та висловлювати вдячність за зворотний зв'язок.
+Твоє завдання — приймати повідомлення від рекрутерів та передавати інформацію Тетяні.
 
 Жорсткі правила:
 1. Якщо користувач надсилає команду /start, твоє найперше повідомлення ПОВИННО бути: "Hi, there! I'm Tatiana's assistant and I'm glad to help you."
-2. В усіх інших випадках ПРИВІТАННЯ дозволено ТІЛЬКИ у найпершому повідомленні діалогу. Далі — КАТЕГОРИЧНО ЗАБОРОНЕНО.
-3. Спілкуйся у ввічливій та професійній манері.
-4. Повідомляй, що ти обов'язково передаси всі деталі Тетяні.
+2. В усіх наступних повідомленнях ЗАБОРОНЕНО використовувати фразу "Дякую за ваше повідомлення" або будь-які її варіації.
+3. ПРИВІТАННЯ дозволено ТІЛЬКИ у найпершому повідомленні діалогу. Далі — КАТЕГОРИЧНО ЗАБОРОНЕНО.
+4. Спілкуйся у ввічливій та професійній манері.
+5. Відповідай лаконічно, продовжуючи контекст.
+6. Повідомляй, що ти обов'язково передаси всі деталі Тетяні.
 """
 # ================================
 # Flask app
@@ -64,26 +66,42 @@ def clean_response(chat_id: int, text: str) -> str:
     # Check if this is the first assistant message in history
     is_first_reply = True
     if chat_id in chat_history:
-        # Filter for assistant messages that were actually sent (not system prompt)
         assistant_messages = [m for m in chat_history[chat_id] if m["role"] == "assistant"]
-        # If there's already at least one assistant message in history, this is not the first reply
-        # Note: we call this after ask_chatgpt adds the current reply to history, so > 1 means it's not the first
         if len(assistant_messages) > 1:
             is_first_reply = False
 
-    if is_first_reply:
-        return text
-
-    forbidden = ["hello", "hi", "good day", "вітаю", "доброго дня", "привіт", "вітання", "добрий день", "добрий вечір", "доброго вечора", "добрий ранок", "доброго ранку"]
-    
     import re
     clean_text = text.strip()
+
+    # Remove forbidden thank you phrases from any message except potentially the very first one
+    if not is_first_reply:
+        thank_you_phrases = [
+            "дякую за ваше повідомлення", 
+            "дякую за повідомлення", 
+            "дякуємо за ваше повідомлення",
+            "thank you for your message",
+            "thank you for the message"
+        ]
+        text_lower = clean_text.lower()
+        for phrase in thank_you_phrases:
+            if text_lower.startswith(phrase):
+                parts = re.split(r'[,.!?;:\n]', clean_text, maxsplit=1)
+                if len(parts) > 1:
+                    clean_text = parts[1].strip()
+                else:
+                    clean_text = clean_text[len(phrase):].strip().lstrip(",.!?").strip()
+                break
+
+    if is_first_reply:
+        return clean_text
+
+    forbidden_greetings = ["hello", "hi", "good day", "вітаю", "доброго дня", "привіт", "вітання", "добрий день", "добрий вечір", "доброго вечора", "добрий ранок", "доброго ранку"]
     
     changed = True
     while changed:
         changed = False
         text_lower = clean_text.lower()
-        for word in forbidden:
+        for word in forbidden_greetings:
             if text_lower.startswith(word):
                 parts = re.split(r'[,.!?;:\n]', clean_text, maxsplit=1)
                 if len(parts) > 1:
