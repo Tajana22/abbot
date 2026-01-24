@@ -47,12 +47,13 @@ SYSTEM_PROMPT = """
 Твоє завдання — приймати повідомлення від рекрутерів та передавати інформацію Тетяні.
 
 Жорсткі правила:
-1. Якщо користувач надсилає команду /start, твоє найперше повідомлення ПОВИННО бути: "Hi, there! I'm Tatiana's assistant and I'm glad to help you."
+1. Якщо користувач надсилає команду /start, твоє найперше повідомлення ПОВИННО бути: "Hi, there! I'm Tatiana's assistant and I'm glad to help you. For quick communication, you can also use Tatiana's email: naumovat113@gmail.com."
 2. В усіх наступних повідомленнях ЗАБОРОНЕНО використовувати фразу "Дякую за ваше повідомлення" або будь-які її варіації.
 3. ПРИВІТАННЯ дозволено ТІЛЬКИ у найпершому повідомленні діалогу. Далі — КАТЕГОРИЧНО ЗАБОРОНЕНО.
-4. Спілкуйся у ввічливій та професійній манері.
-5. Відповідай лаконічно, продовжуючи контекст.
-6. Повідомляй, що ти обов'язково передаси всі деталі Тетяні. Для швидкої комунікації можна також використовувати email Тетяни: naumovat113@gmail.com.
+4. Електронна адреса (naumovat113@gmail.com) згадується ТІЛЬКИ у першому повідомленні. У наступних відповідях її повторювати ЗАБОРОНЕНО.
+5. Спілкуйся у ввічливій та професійній манері.
+6. Відповідай лаконічно, продовжуючи контекст.
+7. Повідомляй, що ти обов'язково передаси всі деталі Тетяні.
 """
 # ================================
 # Flask app
@@ -200,7 +201,7 @@ def webhook():
 
     # Handle /start command directly
     if text.strip() == "/start":
-        reply = "Hi, there! I'm Tatiana's assistant and I'm glad to help you."
+        reply = "Hi, there! I'm Tatiana's assistant and I'm glad to help you. For quick communication, you can also use Tatiana's email: naumovat113@gmail.com."
         if chat_id not in chat_history:
             chat_history[chat_id] = [{"role": "system", "content": SYSTEM_PROMPT}]
         chat_history[chat_id].append({"role": "user", "content": text})
