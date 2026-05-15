@@ -53,8 +53,7 @@ This system consists of two main components:
 ---
 
 ## 📁 Project Structure
-Certainly! Please provide the bot code so I can review it and suggest improvements inline with your instructions.
-.
+
 ├── main.py # Telegram webhook bot
 ├── scripts/
 │ └── improve_repo.py # AI GitHub Actions agent
