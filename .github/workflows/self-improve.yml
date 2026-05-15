@@ -2,8 +2,11 @@ name: AI Self Improvement
 
 on:
   schedule:
-    - cron: '0 */2 * * *'   # кожні 2 години
-  workflow_dispatch:        # можна запускати вручну
+    - cron: '0 */2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   improve:
@@ -30,9 +33,7 @@ jobs:
         run: |
           git config user.name "ai-agent"
           git config user.email "ai@bot.com"
-
           git add .
 
-          git diff --cached --quiet || git commit -m "AI: improve repo"
-
+          git diff --cached --quiet && exit 0 || git commit -m "AI: improve repo"
           git push
