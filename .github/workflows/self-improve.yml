@@ -1,0 +1,38 @@
+name: AI Self Improvement
+
+on:
+  schedule:
+    - cron: '0 */2 * * *'   # кожні 2 години
+  workflow_dispatch:        # можна запускати вручну
+
+jobs:
+  improve:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install openai
+
+      - name: Run AI script
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python scripts/improve_repo.py
+
+      - name: Commit changes
+        run: |
+          git config user.name "ai-agent"
+          git config user.email "ai@bot.com"
+
+          git add .
+
+          git diff --cached --quiet || git commit -m "AI: improve repo"
+
+          git push
