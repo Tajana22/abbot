@@ -54,3 +54,44 @@ This system consists of two main components:
 
 ## 📁 Project Structure
 Certainly! Please provide the bot code so I can review it and suggest improvements inline with your instructions.
+.
+├── main.py # Telegram webhook bot
+├── scripts/
+│ └── improve_repo.py # AI GitHub Actions agent
+├── README.md # Auto-improved documentation
+├── requirements.txt
+└── .github/workflows/
+└── ai-improve.yml
+---
+
+## 🔐 Environment Variables
+
+Create a `.env` file (for local development):
+
+
+TELEGRAM_BOT_TOKEN=your_telegram_token
+OPENAI_API_KEY=your_openai_key
+MY_TELEGRAM_ID=your_id
+PORT=5000
+
+
+---
+
+## ⚡ GitHub Actions Automation
+
+The AI agent runs automatically:
+
+```yaml
+on:
+  schedule:
+    - cron: '0 */2 * * *'
+
+This means:
+👉 Every 2 hours the repository is analyzed and improved automatically.
+
+🧠 How It Works
+Telegram User → Flask Bot → OpenAI → Response → Telegram
+                                   ↓
+                           Forward to Admin
+
+GitHub Actions → Python Script → OpenAI → Improve README → Commit → Push
