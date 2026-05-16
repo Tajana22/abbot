@@ -1,1 +1,1 @@
-Please share the main source files and current README.md of the Telegram bot repository. Once I have that, I'll proceed to improve documentation, readability, comments, and suggest any structure or best practice enhancements without affecting functionality.
+It seems you didn't provide the main source files or the current README.md content of your Telegram bot repository. Please share these files or their content, so I can proceed with improving the documentation, code comments, structure suggestions, and best practices while maintaining your bot's functionality.
