@@ -1,1 +1,1 @@
-Could you please provide the Telegram bot source code and the current README? I need to review the actual content to offer specific improvements related to documentation, structure, code comments, and best practices.
+I see that you haven't yet provided the Telegram bot source code or the current README. Please share those files or snippets so I can review and help improve the repository according to your instructions, ensuring no functionality breakage and only focusing on documentation, comments, structure, and best practices.
