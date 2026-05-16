@@ -1,1 +1,1 @@
-It seems the Telegram bot code and README were not included in your message. Please provide the existing README.md and the Telegram bot source code files so I can review them and suggest improvements on documentation, structure, code comments, and best practices without introducing new features or breaking existing functionality.
+Could you please provide the Telegram bot source code and the current README? I need to review the actual content to offer specific improvements related to documentation, structure, code comments, and best practices.
