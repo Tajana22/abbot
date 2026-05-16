@@ -1,15 +1,1 @@
-Thanks for providing the initial context and the README fragment.
-
-Please share the source files of the bot repository, especially:
-
-- `README.md` (full content if different or more complete)
-- `main.py`
-- any key modules/scripts like `scripts/improve_repo.py`
-
-With these, I will:
-
-- Edit and polish the README for clarity, usage, contribution, and maintenance
-- Add inline code comments and docstrings for functions/classes
-- Suggest minor structure or best practice improvements without changing behavior
-
-You can paste the code here, or share a gist or snippet. Ready when you are!
+Please share the main source files and current README.md of the Telegram bot repository. Once I have that, I'll proceed to improve documentation, readability, comments, and suggest any structure or best practice enhancements without affecting functionality.
