@@ -1,1 +1,1 @@
-Please provide the Telegram bot source code and its current README file. Once I have those, I can help improve the README clarity, documentation, structure suggestions, code comments, and best practices without adding new features or breaking functionality.
+Please provide the source code and the current README file of the Telegram bot repository, so I can review and suggest improvements accordingly.
