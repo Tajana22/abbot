@@ -1,1 +1,1 @@
-Please provide the source code and the current README file of the Telegram bot repository, so I can review and suggest improvements accordingly.
+It looks like you intended to include the bot source code and the current README file, but I didn't receive them. Could you please provide the existing README and the bot's source code? That way, I can review them and suggest improvements following your guidelines.
