@@ -1,15 +1,11 @@
-import requests
-import json
+from app import app
 
-url = "http://127.0.0.1:5000/webhook"
-data = {
-    "message": {
-        "chat": {"id": 123456789},
-        "from": {"username": "testuser"},
-        "text": "Привіт, бот!"
-    }
-}
+def test_webhook():
+    client = app.test_client()
 
-response = requests.post(url, json=data)
-print(response.text)
+    response = client.post(
+        "/webhook",
+        json={"message": "hello"}
+    )
 
+    assert response.status_code == 200
