@@ -7,20 +7,48 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    outputs:
+      server_id: ${{ steps.create.outputs.server_id }}
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Install jq
-        run: sudo apt-get install -y jq
+        run: sudo apt-get update && sudo apt-get install -y jq
 
-      - name: Deploy VPS
+      - name: Create Hetzner VPS
+        id: create
         env:
-          HCLOUD_TOKEN: ${{ secrets.HETZNER_API_TOKEN }}
-        run: bash infra/deploy.sh
+          HETZNER_TOKEN: ${{ secrets.HETZNER_API_TOKEN }}
+        run: |
+          set -e
+
+          echo "Creating VPS..."
+
+          RESPONSE=$(curl -s -X POST "https://api.hetzner.cloud/v1/servers" \
+            -H "Authorization: Bearer $HETZNER_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "name": "ephemeral-runner",
+              "server_type": "cx11",
+              "image": "ubuntu-22.04"
+            }')
+
+          echo "$RESPONSE"
+
+          SERVER_ID=$(echo "$RESPONSE" | jq -r '.server.id')
+
+          if [ "$SERVER_ID" = "null" ]; then
+            echo "Failed to create server"
+            exit 1
+          fi
+
+          echo "server_id=$SERVER_ID" >> $GITHUB_OUTPUT
+
 
   tests:
     needs: deploy
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -30,17 +58,21 @@ jobs:
           pip install -r requirements.txt
           pytest
 
+
   destroy:
-    needs: tests
+    needs: [deploy, tests]
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-
       - name: Install jq
-        run: sudo apt-get install -y jq
+        run: sudo apt-get update && sudo apt-get install -y jq
 
-      - name: Destroy VPS
+      - name: Delete Hetzner VPS
         env:
-          HCLOUD_TOKEN: ${{ secrets.HETZNER_API_TOKEN }}
-        run: bash infra/destroy.sh
+          HETZNER_TOKEN: ${{ secrets.HETZNER_API_TOKEN }}
+          SERVER_ID: ${{ needs.deploy.outputs.server_id }}
+        run: |
+          echo "Deleting server $SERVER_ID"
+
+          curl -X DELETE "https://api.hetzner.cloud/v1/servers/$SERVER_ID" \
+            -H "Authorization: Bearer $HETZNER_TOKEN"
