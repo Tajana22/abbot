@@ -7,7 +7,7 @@ curl -X POST \
   -H "Content-Type: application/json" \
   -d "{
     \"name\": \"$SERVER_NAME\",
-    \"server_type\": \"cx11\",
+    \"server_type\": \"cx22\",
     \"image\": \"ubuntu-22.04\",
     \"location\": \"nbg1\"
   }" \
