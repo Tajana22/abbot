@@ -1,1 +1,1 @@
-I didn't get the bot source code or README yet. Please share the Telegram bot repository files or at least the README and main code so I can improve documentation, comments, structure, and best practices while preserving the bot functionality.
+It seems you haven't provided the Telegram bot source code nor the README content yet. Please share the relevant files or at least the README and main bot code. Once I have those, I can help you improve the documentation, comments, structure suggestions, and best practices without altering the existing functionality.
