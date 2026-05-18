@@ -2,169 +2,165 @@
 
 ## Overview
 
-This repository contains a Telegram bot application with automated AI-driven repository improvements and ephemeral CI infrastructure.
+This repository contains a Python-based Telegram bot application integrated with an automated AI-driven repository self-improvement system and ephemeral CI infrastructure.
 
-The project demonstrates:
-- GitHub Actions automation
-- AI-assisted repository self-improvement using LLM APIs
-- Scheduled autonomous repository maintenance
-- Self-hosted ephemeral GitHub runners
-- Infrastructure automation for temporary VPS testing environments
-
----
-
-# Features
-
-## Telegram Bot
-- Python-based Telegram bot
-- Hosted on Replit
-- Modular project structure
-- Environment variable support for secrets
-
-## AI Self-Improvement System
-Every 2 hours, GitHub Actions automatically:
-- analyzes repository documentation
-- improves README structure and clarity
-- updates developer-oriented documentation
-- applies safe repository improvements
-- commits changes back to GitHub automatically
-
-## Ephemeral CI Infrastructure
-The repository also includes infrastructure automation for:
-- temporary Hetzner VPS creation
-- self-hosted GitHub Actions runner setup
-- isolated test execution
-- automatic VPS destruction after tests
-- cost-efficient CI/CD workflows
+Key highlights:
+- Automated GitHub Actions workflows for repository maintenance
+- AI-assisted documentation and code improvements using LLM APIs
+- Scheduled autonomous repository updates every 2 hours
+- Self-hosted ephemeral GitHub runners on temporary VPS instances
+- Infrastructure automation for cost-efficient, isolated testing environments
 
 ---
 
-# Repository Structure
+## Features
 
-```text
+### Telegram Bot
+- Python 3.11 Telegram bot using Flask
+- Modular and maintainable project structure
+- Hosted on Replit for easy deployment
+- Supports environment variables for secure secret management
+
+### AI Self-Improvement System
+- Runs every 2 hours via GitHub Actions cron schedule
+- Analyzes and improves repository documentation and developer guides
+- Applies safe, incremental repository improvements
+- Automatically commits and pushes changes back to GitHub
+
+### Ephemeral CI Infrastructure
+- Automates creation and teardown of temporary Hetzner VPS instances
+- Sets up self-hosted GitHub Actions runners on VPS
+- Runs isolated tests in ephemeral environments
+- Automatically destroys infrastructure post-testing to reduce costs
+
+---
+
+## Repository Structure
+
+```
 .
-├── .github/workflows/      # GitHub Actions workflows
-├── infra/                  # Infrastructure automation scripts
-├── scripts/                # AI automation scripts
-├── main.py                 # Telegram bot application
+├── .github/workflows/      # GitHub Actions workflow definitions
+├── infra/                  # Infrastructure automation scripts (e.g., VPS setup)
+├── scripts/                # AI automation and improvement scripts
+├── tests/                  # Automated test suites
+├── main.py                 # Telegram bot application entrypoint
 ├── requirements.txt        # Python dependencies
-├── README.md               # Project documentation
-└── tests/                  # Automated tests
+└── README.md               # Project documentation
 ```
 
 ---
 
-# Technologies Used
+## Technologies Used
 
 - Python 3.11
-- GitHub Actions
-- OpenAI API
-- Replit
-- Hetzner Cloud
-- Linux
-- Git
-- CI/CD automation
+- Flask web framework
+- GitHub Actions for CI/CD automation
+- OpenAI API for AI-driven improvements
+- Replit hosting platform
+- Hetzner Cloud for ephemeral VPS infrastructure
+- Linux environment
+- Git version control
 
 ---
 
-# AI Automation Workflow
+## AI Automation Workflow
 
-The workflow runs automatically every 2 hours using GitHub Actions cron scheduling.
+The AI self-improvement workflow is scheduled to run every 2 hours using GitHub Actions cron syntax.
 
-Main automation steps:
-1. Checkout repository
-2. Install dependencies
-3. Run AI improvement script
-4. Generate documentation improvements
-5. Commit and push updates automatically
+Workflow steps:
+1. Checkout repository code
+2. Install Python dependencies
+3. Execute AI improvement scripts to analyze and update docs/code
+4. Commit and push any safe improvements automatically
 
-Workflow file:
-```text
-.github/workflows/ai-self-improve.yml
-```
+Workflow configuration file:  
+`.github/workflows/ai-self-improve.yml`
 
 ---
 
-# Setup
+## Setup Instructions
 
-## Clone Repository
+### Clone the Repository
 
 ```bash
 git clone https://github.com/your-username/your-repository.git
 cd your-repository
 ```
 
-## Install Dependencies
+### Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Configure Environment Variables
+### Configure Environment Variables
 
-Create environment variables:
+Create a `.env` file or export environment variables with the following keys:
 
 ```bash
-OPENAI_API_KEY=your_api_key
-BOT_TOKEN=your_telegram_token
+OPENAI_API_KEY=your_openai_api_key
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+MY_TELEGRAM_ID=your_telegram_user_id  # Optional, for personalized features
 ```
+
+Ensure these environment variables are set before running the bot.
 
 ---
 
-# Running Locally
+## Running the Bot Locally
+
+Start the Telegram bot with:
 
 ```bash
 python main.py
 ```
 
----
-
-# GitHub Secrets
-
-The following repository secrets are required:
-
-| Secret Name | Description |
-|---|---|
-| OPENAI_API_KEY | OpenAI API key |
-| BOT_TOKEN | Telegram bot token |
-| HETZNER_TOKEN | Hetzner Cloud API token |
+The bot will listen for incoming messages and respond using AI-generated replies.
 
 ---
 
-# CI/CD Infrastructure
+## GitHub Repository Secrets
 
-The project includes:
-- scheduled AI repository improvements
-- automated testing
-- ephemeral VPS deployment
-- self-hosted GitHub runners
-- temporary infrastructure lifecycle management
+For full CI/CD and infrastructure automation, configure the following repository secrets in GitHub:
 
-Infrastructure is automatically destroyed after test execution to minimize cloud costs.
-
----
-
-# Security Notes
-
-- Secrets are stored using GitHub Secrets
-- No hardcoded credentials
-- No public SSH exposure for VPS runners
-- Tunnel-based secure remote access
+| Secret Name    | Description                      |
+| -------------- | --------------------------------|
+| OPENAI_API_KEY | OpenAI API key for AI services  |
+| BOT_TOKEN      | Telegram bot token              |
+| HETZNER_TOKEN  | Hetzner Cloud API token for VPS management |
 
 ---
 
-# Future Improvements
+## CI/CD and Infrastructure Details
 
+- Scheduled AI repository improvements via GitHub Actions
+- Automated test execution with ephemeral infrastructure
+- Temporary VPS deployment on Hetzner Cloud for isolated runners
+- Self-hosted GitHub Actions runners configured dynamically
+- Infrastructure lifecycle management ensures automatic teardown post-tests to minimize costs
+
+---
+
+## Security Considerations
+
+- All sensitive credentials are managed securely via GitHub Secrets and environment variables
+- No hardcoded secrets or tokens in the codebase
+- VPS runners do not expose public SSH access; secure tunnel-based remote access is used
+- Logs and error handling implemented to avoid leaking sensitive information
+
+---
+
+## Future Enhancements
+
+Planned improvements include:
 - Extended automated documentation generation
-- Static analysis integration
-- Automated linting improvements
-- Expanded test coverage
-- Infrastructure monitoring
+- Integration of static code analysis tools
+- Automated linting and code style enforcement
+- Expanded test coverage for robustness
+- Infrastructure monitoring and alerting capabilities
 
 ---
 
-# Author
+## Author
 
 DevOps / Automation / AI Infrastructure Test Assignment
-
-```
