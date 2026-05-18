@@ -5,33 +5,37 @@
 This repository contains a Python-based Telegram bot application integrated with an automated AI-driven repository self-improvement system and ephemeral CI infrastructure.
 
 ### Key Highlights
-- Automated GitHub Actions workflows for repository maintenance
-- AI-assisted documentation and code improvements using LLM APIs
-- Scheduled autonomous repository updates every 2 hours
-- Self-hosted ephemeral GitHub runners on temporary VPS instances
-- Infrastructure automation for cost-efficient, isolated testing environments
+
+- Automated GitHub Actions workflows for repository maintenance  
+- AI-assisted documentation and code improvements using LLM APIs  
+- Scheduled autonomous repository updates every 2 hours  
+- Self-hosted ephemeral GitHub runners on temporary VPS instances  
+- Infrastructure automation for cost-efficient, isolated testing environments  
 
 ---
 
 ## Features
 
 ### Telegram Bot
-- Python 3.11 Telegram bot using Flask framework
-- Modular and maintainable project structure
-- Hosted on Replit for easy deployment
-- Supports environment variables for secure secret management
+
+- Python 3.11 Telegram bot using Flask framework  
+- Modular and maintainable project structure  
+- Hosted on Replit for easy deployment  
+- Supports environment variables for secure secret management  
 
 ### AI Self-Improvement System
-- Runs every 2 hours via GitHub Actions cron schedule
-- Analyzes and improves repository documentation and developer guides
-- Applies safe, incremental repository improvements
-- Automatically commits and pushes changes back to GitHub
+
+- Runs every 2 hours via GitHub Actions cron schedule  
+- Analyzes and improves repository documentation and developer guides  
+- Applies safe, incremental repository improvements  
+- Automatically commits and pushes changes back to GitHub  
 
 ### Ephemeral CI Infrastructure
-- Automates creation and teardown of temporary Hetzner VPS instances
-- Sets up self-hosted GitHub Actions runners on VPS
-- Runs isolated tests in ephemeral environments
-- Automatically destroys infrastructure post-testing to reduce costs
+
+- Automates creation and teardown of temporary Hetzner VPS instances  
+- Sets up self-hosted GitHub Actions runners on VPS  
+- Runs isolated tests in ephemeral environments  
+- Automatically destroys infrastructure post-testing to reduce costs  
 
 ---
 
@@ -52,14 +56,14 @@ This repository contains a Python-based Telegram bot application integrated with
 
 ## Technologies Used
 
-- Python 3.11
-- Flask web framework
-- GitHub Actions for CI/CD automation
-- OpenAI API for AI-driven improvements
-- Replit hosting platform
-- Hetzner Cloud for ephemeral VPS infrastructure
-- Linux environment
-- Git version control
+- Python 3.11  
+- Flask web framework  
+- GitHub Actions for CI/CD automation  
+- OpenAI API for AI-driven improvements  
+- Replit hosting platform  
+- Hetzner Cloud for ephemeral VPS infrastructure  
+- Linux environment  
+- Git version control  
 
 ---
 
@@ -68,10 +72,11 @@ This repository contains a Python-based Telegram bot application integrated with
 The AI self-improvement workflow is scheduled to run every 2 hours using GitHub Actions cron syntax.
 
 ### Workflow Steps
-1. Checkout repository code
-2. Install Python dependencies
-3. Execute AI improvement scripts to analyze and update documentation and code
-4. Commit and push any safe improvements automatically
+
+1. Checkout repository code  
+2. Install Python dependencies  
+3. Execute AI improvement scripts to analyze and update documentation and code  
+4. Commit and push any safe improvements automatically  
 
 Workflow configuration file:  
 `.github/workflows/ai-self-improve.yml`
@@ -133,31 +138,32 @@ To enable full CI/CD and infrastructure automation, configure the following repo
 
 ## CI/CD and Infrastructure Details
 
-- Scheduled AI repository improvements via GitHub Actions
-- Automated test execution with ephemeral infrastructure
-- Temporary VPS deployment on Hetzner Cloud for isolated runners
-- Self-hosted GitHub Actions runners configured dynamically
-- Infrastructure lifecycle management ensures automatic teardown post-tests to minimize costs
+- Scheduled AI repository improvements via GitHub Actions  
+- Automated test execution with ephemeral infrastructure  
+- Temporary VPS deployment on Hetzner Cloud for isolated runners  
+- Self-hosted GitHub Actions runners configured dynamically  
+- Infrastructure lifecycle management ensures automatic teardown post-tests to minimize costs  
 
 ---
 
 ## Security Considerations
 
-- All sensitive credentials are managed securely via GitHub Secrets and environment variables
-- No hardcoded secrets or tokens in the codebase
-- VPS runners do not expose public SSH access; secure tunnel-based remote access is used
-- Logs and error handling implemented to avoid leaking sensitive information
+- All sensitive credentials are managed securely via GitHub Secrets and environment variables  
+- No hardcoded secrets or tokens in the codebase  
+- VPS runners do not expose public SSH access; secure tunnel-based remote access is used  
+- Logs and error handling implemented to avoid leaking sensitive information  
 
 ---
 
 ## Future Enhancements
 
 Planned improvements include:
-- Extended automated documentation generation
-- Integration of static code analysis tools
-- Automated linting and code style enforcement
-- Expanded test coverage for robustness
-- Infrastructure monitoring and alerting capabilities
+
+- Extended automated documentation generation  
+- Integration of static code analysis tools  
+- Automated linting and code style enforcement  
+- Expanded test coverage for robustness  
+- Infrastructure monitoring and alerting capabilities  
 
 ---
 
