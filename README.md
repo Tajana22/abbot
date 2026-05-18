@@ -4,7 +4,7 @@
 
 This repository contains a Python-based Telegram bot application integrated with an automated AI-driven repository self-improvement system and ephemeral CI infrastructure.
 
-Key highlights:
+### Key Highlights
 - Automated GitHub Actions workflows for repository maintenance
 - AI-assisted documentation and code improvements using LLM APIs
 - Scheduled autonomous repository updates every 2 hours
@@ -16,7 +16,7 @@ Key highlights:
 ## Features
 
 ### Telegram Bot
-- Python 3.11 Telegram bot using Flask
+- Python 3.11 Telegram bot using Flask framework
 - Modular and maintainable project structure
 - Hosted on Replit for easy deployment
 - Supports environment variables for secure secret management
@@ -67,10 +67,10 @@ Key highlights:
 
 The AI self-improvement workflow is scheduled to run every 2 hours using GitHub Actions cron syntax.
 
-Workflow steps:
+### Workflow Steps
 1. Checkout repository code
 2. Install Python dependencies
-3. Execute AI improvement scripts to analyze and update docs/code
+3. Execute AI improvement scripts to analyze and update documentation and code
 4. Commit and push any safe improvements automatically
 
 Workflow configuration file:  
@@ -80,22 +80,22 @@ Workflow configuration file:
 
 ## Setup Instructions
 
-### Clone the Repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/your-username/your-repository.git
 cd your-repository
 ```
 
-### Install Dependencies
+### 2. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Configure Environment Variables
+### 3. Configure Environment Variables
 
-Create a `.env` file or export environment variables with the following keys:
+Create a `.env` file in the project root or export environment variables in your shell with the following keys:
 
 ```bash
 OPENAI_API_KEY=your_openai_api_key
@@ -121,12 +121,12 @@ The bot will listen for incoming messages and respond using AI-generated replies
 
 ## GitHub Repository Secrets
 
-For full CI/CD and infrastructure automation, configure the following repository secrets in GitHub:
+To enable full CI/CD and infrastructure automation, configure the following repository secrets in your GitHub repository settings:
 
-| Secret Name    | Description                      |
-| -------------- | --------------------------------|
-| OPENAI_API_KEY | OpenAI API key for AI services  |
-| BOT_TOKEN      | Telegram bot token              |
+| Secret Name    | Description                          |
+| -------------- | ---------------------------------- |
+| OPENAI_API_KEY | OpenAI API key for AI services     |
+| BOT_TOKEN      | Telegram bot token                  |
 | HETZNER_TOKEN  | Hetzner Cloud API token for VPS management |
 
 ---
