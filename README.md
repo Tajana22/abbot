@@ -108,7 +108,7 @@ TELEGRAM_BOT_TOKEN=your_telegram_bot_token
 MY_TELEGRAM_ID=your_telegram_user_id  # Optional, for personalized features
 ```
 
-Ensure these environment variables are set before running the bot.
+> **Note:** Ensure these environment variables are set before running the bot.
 
 ---
 
