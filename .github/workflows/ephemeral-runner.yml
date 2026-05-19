@@ -26,10 +26,15 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/${{ github.repository }}/actions/runners/registration-token)
 
-          echo "$RESPONSE"
-
           TOKEN=$(echo "$RESPONSE" | jq -r '.token')
+
+          if [ "$TOKEN" = "null" ]; then
+            echo "Failed to get runner token"
+            exit 1
+          fi
+
           echo "token=$TOKEN" >> $GITHUB_OUTPUT
+
 
       - name: Create Hetzner VPS
         id: create
@@ -43,14 +48,24 @@ jobs:
           USER_DATA=$(cat <<EOF
 #cloud-config
 runcmd:
-  - curl -fsSL https://tailscale.com/install.sh | sh
-  - tailscale up --authkey=${TAILSCALE_AUTH_KEY} --ssh
   - apt-get update
-  - apt-get install -y curl git jq
+  - apt-get install -y curl git jq ufw
+
+  # 🔒 Disable public SSH
+  - ufw deny 22
+  - ufw --force enable
+
+  # 🔗 Install Tailscale
+  - curl -fsSL https://tailscale.com/install.sh | sh
+  - tailscale up --authkey=${TAILSCALE_AUTH_KEY}
+
+  # 🤖 Install GitHub Runner
   - mkdir /runner && cd /runner
   - curl -L -o actions-runner.tar.gz https://github.com/actions/runner/releases/latest/download/actions-runner-linux-x64-2.334.0.tar.gz
   - tar xzf actions-runner.tar.gz
+
   - ./config.sh --url https://github.com/${{ github.repository }} --token ${RUNNER_TOKEN} --unattended --replace
+
   - ./run.sh
 EOF
 )
@@ -84,8 +99,8 @@ EOF
     steps:
       - name: Wait for runner to be ready
         run: |
-          echo "Waiting for runner..."
-          sleep 60
+          echo "Waiting for runner to register..."
+          sleep 90
 
 
   tests:
@@ -114,5 +129,5 @@ EOF
         run: |
           echo "Deleting server $SERVER_ID"
 
-          curl -X DELETE "https://api.hetzner.cloud/v1/servers/$SERVER_ID" \
+          curl -s -X DELETE "https://api.hetzner.cloud/v1/servers/$SERVER_ID" \
             -H "Authorization: Bearer $HETZNER_TOKEN"
