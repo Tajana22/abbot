@@ -18,7 +18,7 @@ This repository contains a Python-based Telegram bot application integrated with
 
 ### Telegram Bot
 
-- Python 3.11 Telegram bot using Flask framework  
+- Python 3.11 Telegram bot built with the Flask framework  
 - Modular and maintainable project structure  
 - Hosted on Replit for easy deployment  
 - Supports environment variables for secure secret management  
