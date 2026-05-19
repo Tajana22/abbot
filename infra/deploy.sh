@@ -4,9 +4,8 @@ set -e
 
 echo "Creating Hetzner VPS..."
 
-# DEBUG (тимчасово)
+# DEBUG SAFE
 echo "TOKEN LENGTH: ${#HETZNER_TOKEN}"
-echo "TOKEN PREFIX: ${HETZNER_TOKEN:0:4}"
 
 if [ -z "$HETZNER_TOKEN" ]; then
   echo "ERROR: HETZNER_TOKEN is empty"
@@ -20,8 +19,17 @@ RESPONSE=$(curl -s -X POST "https://api.hetzner.cloud/v1/servers" \
     "name": "ephemeral-runner",
     "server_type": "cx11",
     "image": "ubuntu-22.04",
-    "start_after_create": true
+    "ssh_keys": []
   }')
 
 echo "Response:"
 echo "$RESPONSE"
+
+SERVER_ID=$(echo "$RESPONSE" | jq -r '.server.id')
+
+if [ "$SERVER_ID" = "null" ] || [ -z "$SERVER_ID" ]; then
+  echo "ERROR: VPS creation failed"
+  exit 1
+fi
+
+echo "Server created: $SERVER_ID"
