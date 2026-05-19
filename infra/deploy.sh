@@ -17,9 +17,9 @@ RESPONSE=$(curl -s -X POST "https://api.hetzner.cloud/v1/servers" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "ephemeral-runner",
-    "server_type": "cx11",
+    "server_type": "cax11",
     "image": "ubuntu-22.04",
-    "ssh_keys": []
+    "location": "fsn1"
   }')
 
 echo "Response:"
