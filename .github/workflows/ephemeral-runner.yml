@@ -1,15 +1,46 @@
-- name: Create Hetzner VPS
-  id: create
-  env:
-    HETZNER_TOKEN: ${{ secrets.HETZNER_API_TOKEN }}
-    TAILSCALE_AUTH_KEY: ${{ secrets.TAILSCALE_AUTH_KEY }}
-    RUNNER_TOKEN: ${{ secrets.RUNNER_TOKEN }}
-  run: |
-    set -e
+name: Ephemeral Hetzner Runner
 
-    echo "Creating VPS..."
+on:
+  workflow_dispatch:
 
-    USER_DATA=$(cat <<EOF
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    outputs:
+      server_id: ${{ steps.create.outputs.server_id }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Get GitHub Runner Token
+        id: token
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RESPONSE=$(curl -s -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }}/actions/runners/registration-token)
+
+          echo "$RESPONSE"
+
+          TOKEN=$(echo "$RESPONSE" | jq -r '.token')
+          echo "token=$TOKEN" >> $GITHUB_OUTPUT
+
+      - name: Create Hetzner VPS
+        id: create
+        env:
+          HETZNER_TOKEN: ${{ secrets.HETZNER_API_TOKEN }}
+          TAILSCALE_AUTH_KEY: ${{ secrets.TAILSCALE_AUTH_KEY }}
+          RUNNER_TOKEN: ${{ steps.token.outputs.token }}
+        run: |
+          set -e
+
+          USER_DATA=$(cat <<EOF
 #cloud-config
 runcmd:
   - curl -fsSL https://tailscale.com/install.sh | sh
@@ -24,23 +55,64 @@ runcmd:
 EOF
 )
 
-    RESPONSE=$(curl -s -X POST "https://api.hetzner.cloud/v1/servers" \
-      -H "Authorization: Bearer $HETZNER_TOKEN" \
-      -H "Content-Type: application/json" \
-      -d "{
-        \"name\": \"ephemeral-runner\",
-        \"server_type\": \"cx11\",
-        \"image\": \"ubuntu-22.04\",
-        \"user_data\": $(jq -Rs . <<< "$USER_DATA")
-      }")
+          RESPONSE=$(curl -s -X POST "https://api.hetzner.cloud/v1/servers" \
+            -H "Authorization: Bearer $HETZNER_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"name\": \"ephemeral-runner\",
+              \"server_type\": \"cx11\",
+              \"image\": \"ubuntu-22.04\",
+              \"user_data\": $(jq -Rs . <<< "$USER_DATA")
+            }")
 
-    echo "$RESPONSE"
+          echo "$RESPONSE"
 
-    SERVER_ID=$(echo "$RESPONSE" | jq -r '.server.id')
+          SERVER_ID=$(echo "$RESPONSE" | jq -r '.server.id')
 
-    if [ "$SERVER_ID" = "null" ]; then
-      echo "Failed to create server"
-      exit 1
-    fi
+          if [ "$SERVER_ID" = "null" ]; then
+            echo "Failed to create server"
+            exit 1
+          fi
 
-    echo "server_id=$SERVER_ID" >> $GITHUB_OUTPUT
+          echo "server_id=$SERVER_ID" >> $GITHUB_OUTPUT
+
+
+  wait-runner:
+    needs: deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Wait for runner to be ready
+        run: |
+          echo "Waiting for runner..."
+          sleep 60
+
+
+  tests:
+    needs: wait-runner
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run tests
+        run: |
+          pip install -r requirements.txt
+          pytest
+
+
+  destroy:
+    needs: [deploy, tests]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Delete Hetzner VPS
+        env:
+          HETZNER_TOKEN: ${{ secrets.HETZNER_API_TOKEN }}
+          SERVER_ID: ${{ needs.deploy.outputs.server_id }}
+        run: |
+          echo "Deleting server $SERVER_ID"
+
+          curl -X DELETE "https://api.hetzner.cloud/v1/servers/$SERVER_ID" \
+            -H "Authorization: Bearer $HETZNER_TOKEN"
