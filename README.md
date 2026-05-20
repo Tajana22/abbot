@@ -173,7 +173,7 @@ DevOps / Automation / AI Infrastructure Test Assignment
 
 ---
 
-## Application Code Overview and Comments Suggestions
+## Application Code Overview and Commenting Suggestions
 
 - **Logging:** Configured at INFO level with timestamps for effective debugging and monitoring.  
 - **Environment Variables:** Loaded via `dotenv` with safe checks to avoid crashes if missing.  
@@ -188,10 +188,10 @@ DevOps / Automation / AI Infrastructure Test Assignment
 
 ### Suggested Code Comment Improvements
 
-- Add docstrings to all functions describing parameters, return values, and purpose.  
+- Add comprehensive docstrings to all functions describing parameters, return values, and purpose.  
 - Document the structure and expected format of `chat_history` for maintainability.  
-- Clarify the rationale behind limiting chat history length to 10 messages.  
+- Clarify the rationale behind limiting chat history length to 10 messages to balance context and performance.  
 - Explain the choice of the `gpt-4o-mini` model and fallback behavior if unavailable.  
-- Include comments on security practices, e.g., why environment variables are preferred over hardcoding.  
-- Add inline comments in complex blocks like `clean_response` to explain the greeting removal logic.  
-- Consider adding type hints consistently for all functions and variables for better readability.
+- Include comments on security practices, e.g., why environment variables are preferred over hardcoding secrets.  
+- Add inline comments in complex blocks like `clean_response` to explain the greeting removal logic and regex usage.  
+- Consider adding consistent type hints for all functions and variables to improve readability and maintainability.
