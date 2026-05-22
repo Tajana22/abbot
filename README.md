@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains a Python-based Telegram bot integrated with an automated AI-driven repository self-improvement system and ephemeral CI infrastructure.
+This repository hosts a Python-based Telegram bot integrated with an automated AI-driven repository self-improvement system and ephemeral CI infrastructure.
 
 ### Key Highlights
 
