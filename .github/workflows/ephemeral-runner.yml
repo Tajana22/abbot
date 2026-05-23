@@ -6,22 +6,21 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     outputs:
       server_id: ${{ steps.create.outputs.server_id }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Install deps
         run: |
           sudo apt-get update
           sudo apt-get install -y jq curl
 
-      - name: Generate GitHub Runner Token
+      - name: Generate runner token
         id: runner_token
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           set -euo pipefail
 
@@ -33,13 +32,14 @@ jobs:
           TOKEN=$(echo "$RESPONSE" | jq -r '.token')
 
           if [[ -z "$TOKEN" || "$TOKEN" == "null" ]]; then
-            echo "Failed to generate runner token"
+            echo "❌ Failed to generate runner token"
+            echo "$RESPONSE"
             exit 1
           fi
 
           echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
 
-      - name: Deploy ephemeral VPS
+      - name: Deploy VPS
         id: create
         env:
           HETZNER_TOKEN: ${{ secrets.HETZNER_API_TOKEN }}
@@ -55,10 +55,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Wait for runner registration
+      - name: Wait for runner (polling)
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
-          echo "Waiting for ephemeral runner..."
-          sleep 120
+          set -euo pipefail
+
+          echo "⏳ Waiting for runner..."
+
+          for i in {1..30}; do
+            RESPONSE=$(curl -s \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              https://api.github.com/repos/${{ github.repository }}/actions/runners)
+
+            if echo "$RESPONSE" | jq -e '.runners[] | select(.status=="online")' > /dev/null; then
+              echo "✅ Runner is online"
+              exit 0
+            fi
+
+            sleep 5
+          done
+
+          echo "❌ Runner did not come online"
+          exit 1
 
   tests:
     needs: wait-runner
@@ -75,8 +94,8 @@ jobs:
 
   destroy:
     needs: [deploy, tests]
-    runs-on: ubuntu-latest
     if: always()
+    runs-on: ubuntu-latest
 
     steps:
       - name: Destroy VPS
@@ -92,4 +111,4 @@ jobs:
             "https://api.hetzner.cloud/v1/servers/$SERVER_ID" \
             -H "Authorization: Bearer $HETZNER_TOKEN"
 
-          echo "Server deleted"
+          echo "✅ Server deleted"
