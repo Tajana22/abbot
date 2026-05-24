@@ -2,12 +2,12 @@
 
 ## Overview
 
-This repository contains a Python-based Telegram bot integrated with an automated AI-driven repository self-improvement system and ephemeral CI infrastructure.
+This repository hosts a Python-based Telegram bot integrated with an automated AI-driven repository self-improvement system and ephemeral CI infrastructure.
 
 ### Key Highlights
 
 - Automated GitHub Actions workflows for repository maintenance  
-- AI-assisted documentation and code improvements using LLM APIs  
+- AI-assisted documentation and code improvements using large language model (LLM) APIs  
 - Scheduled autonomous repository updates every 2 hours  
 - Self-hosted ephemeral GitHub runners on temporary VPS instances  
 - Infrastructure automation for cost-efficient, isolated testing environments  
@@ -19,7 +19,7 @@ This repository contains a Python-based Telegram bot integrated with an automate
 ### Telegram Bot
 
 - Python 3.11 Telegram bot built with the Flask framework  
-- Modular and maintainable project structure  
+- Modular, maintainable project structure  
 - Hosted on Replit for easy deployment  
 - Supports environment variables for secure secret management  
 
@@ -69,7 +69,7 @@ This repository contains a Python-based Telegram bot integrated with an automate
 
 ## AI Automation Workflow
 
-The AI self-improvement workflow is scheduled to run every 2 hours using GitHub Actions cron syntax.
+The AI self-improvement workflow runs every 2 hours using GitHub Actions cron syntax.
 
 ### Workflow Steps
 
