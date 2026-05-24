@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository hosts a Python-based Telegram bot integrated with an automated AI-driven repository self-improvement system and ephemeral CI infrastructure.
+This repository contains a Python-based Telegram bot integrated with an automated AI-driven repository self-improvement system and ephemeral CI infrastructure.
 
 ### Key Highlights
 
@@ -19,7 +19,7 @@ This repository hosts a Python-based Telegram bot integrated with an automated A
 ### Telegram Bot
 
 - Python 3.11 Telegram bot built with the Flask framework  
-- Modular, maintainable project structure  
+- Modular and maintainable project structure  
 - Hosted on Replit for easy deployment  
 - Supports environment variables for secure secret management  
 
