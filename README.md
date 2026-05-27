@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains a Python-based Telegram bot integrated with an automated AI-driven self-improvement system and ephemeral CI infrastructure. It is designed to continuously enhance the repository while enabling cost-efficient, isolated testing environments.
+This repository hosts a Python-based Telegram bot integrated with an automated AI-driven self-improvement system and ephemeral CI infrastructure. It is designed to continuously enhance the repository while enabling cost-efficient, isolated testing environments.
 
 ### Key Highlights
 
@@ -41,7 +41,6 @@ This repository contains a Python-based Telegram bot integrated with an automate
 
 ## Repository Structure
 
-```
 .
 ├── .github/workflows/      # GitHub Actions workflow definitions  
 ├── infra/                  # Infrastructure automation scripts (e.g., VPS setup)  
@@ -50,7 +49,6 @@ This repository contains a Python-based Telegram bot integrated with an automate
 ├── main.py                 # Telegram bot application entrypoint  
 ├── requirements.txt        # Python dependencies  
 └── README.md               # Project documentation  
-```
 
 ---
 
