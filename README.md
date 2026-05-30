@@ -175,16 +175,47 @@ DevOps / Automation / AI Infrastructure Test Assignment
 
 ## Application Code Overview and Commenting Suggestions
 
-- **Logging:** Configured at INFO level with timestamps for effective debugging and monitoring.  
-- **Environment Variables:** Loaded via `dotenv` with safe checks to avoid crashes if missing.  
-- **OpenAI Client:** Lazily initialized only if API key is present to prevent runtime errors.  
-- **Flask App:** Simple web server to handle Telegram webhook or polling requests.  
-- **Chat History:** Maintains up to 10 recent messages per chat to provide context for AI responses.  
-- **System Prompt:** Defined in Ukrainian to personalize the assistant's behavior.  
-- **Response Cleaner:** Removes common greetings from AI responses to keep replies concise and relevant.  
-- **Telegram Message Sender:** Handles message sending with error logging and token presence checks.  
-- **ChatGPT Interaction:** Wraps OpenAI API calls with error handling and maintains conversation state.  
-- **Routes:** Minimal GET route for health check returning "OK".  
+### Logging
+
+- Configured at INFO level with timestamps for effective debugging and monitoring.
+
+### Environment Variables
+
+- Loaded via `dotenv` with safe checks to avoid crashes if missing.
+
+### OpenAI Client
+
+- Lazily initialized only if API key is present to prevent runtime errors.
+
+### Flask App
+
+- Simple web server to handle Telegram webhook or polling requests.
+
+### Chat History
+
+- Maintains up to 10 recent messages per chat to provide context for AI responses.
+
+### System Prompt
+
+- Defined in Ukrainian to personalize the assistant's behavior.
+
+### Response Cleaner
+
+- Removes common greetings from AI responses to keep replies concise and relevant.
+
+### Telegram Message Sender
+
+- Handles message sending with error logging and token presence checks.
+
+### ChatGPT Interaction
+
+- Wraps OpenAI API calls with error handling and maintains conversation state.
+
+### Routes
+
+- Minimal GET route for health check returning "OK".
+
+---
 
 ### Suggested Code Comment Improvements
 
