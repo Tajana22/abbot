@@ -74,9 +74,9 @@ RESPONSE=$(curl -s -X POST \
   -H "Content-Type: application/json" \
   -d "{
     \"name\": \"ephemeral-runner\",
-    \"server_type\": \"cax11\",
+    \"server_type\": \"cx22\",
     \"image\": \"ubuntu-22.04\",
-    \"location\": \"fsn1\",
+    \"location\": \"nbg1\",
     \"user_data\": $(jq -Rs . <<< "$USER_DATA")
   }")
 
