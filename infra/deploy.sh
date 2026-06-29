@@ -18,6 +18,11 @@ for var in "${required_vars[@]}"; do
   fi
 done
 
+RUNNER_VERSION="2.335.1"
+SERVER_TYPE="cx22"
+LOCATION="hel1"
+IMAGE="ubuntu-24.04"
+
 USER_DATA=$(cat <<EOF
 #cloud-config
 
@@ -33,26 +38,21 @@ packages:
   - ufw
 
 runcmd:
-  # Firewall
   - ufw default deny incoming
   - ufw default allow outgoing
   - ufw deny 22
   - ufw --force enable
 
-  # Install Tailscale
   - curl -fsSL https://tailscale.com/install.sh | sh
   - tailscale up --authkey=${TAILSCALE_AUTH_KEY}
 
-  # Create runner directory
   - mkdir -p /runner
   - cd /runner
 
-  # Download ARM64 GitHub runner
-  - curl -L -o actions-runner.tar.gz https://github.com/actions/runner/releases/latest/download/actions-runner-linux-arm64-2.334.0.tar.gz
+  - curl -L -o actions-runner.tar.gz https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz
 
   - tar xzf actions-runner.tar.gz
 
-  # Configure ephemeral runner
   - ./config.sh \
       --url https://github.com/${GITHUB_REPOSITORY} \
       --token ${RUNNER_TOKEN} \
@@ -61,12 +61,14 @@ runcmd:
       --replace \
       --labels ephemeral,hetzner
 
-  # Start runner
   - nohup ./run.sh > runner.log 2>&1 &
 EOF
 )
 
 echo "Creating VPS..."
+echo "Using server_type=${SERVER_TYPE}"
+echo "Using location=${LOCATION}"
+echo "Using image=${IMAGE}"
 
 RESPONSE=$(curl -s -X POST \
   "https://api.hetzner.cloud/v1/servers" \
@@ -74,9 +76,9 @@ RESPONSE=$(curl -s -X POST \
   -H "Content-Type: application/json" \
   -d "{
     \"name\": \"ephemeral-runner\",
-    \"server_type\": \"cx22\",
-    \"image\": \"ubuntu-22.04\",
-    \"location\": \"nbg1\",
+    \"server_type\": \"${SERVER_TYPE}\",
+    \"image\": \"${IMAGE}\",
+    \"location\": \"${LOCATION}\",
     \"user_data\": $(jq -Rs . <<< "$USER_DATA")
   }")
 
