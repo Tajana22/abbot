@@ -94,7 +94,11 @@ cd your-repository
 
 ### 2. Install Dependencies
 
+It is recommended to use a virtual environment:
+
 ```bash
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
@@ -108,7 +112,7 @@ TELEGRAM_BOT_TOKEN=your_telegram_bot_token
 MY_TELEGRAM_ID=your_telegram_user_id  # Optional, for personalized features
 ```
 
-> **Note:** Ensure these environment variables are set before running the bot.
+> **Note:** Ensure these environment variables are set before running the bot. The `.env` file is loaded automatically by the application.
 
 ---
 
