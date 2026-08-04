@@ -94,7 +94,7 @@ cd your-repository
 
 ### 2. Install Dependencies
 
-It is recommended to use a virtual environment:
+It is recommended to use a virtual environment for dependency isolation:
 
 ```bash
 python3 -m venv venv
